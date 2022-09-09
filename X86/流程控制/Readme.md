@@ -90,29 +90,39 @@ jnle 不小于等于
 jns 无符号
 jnz 非零
 js 如果带符号
-jz 如果为零</code></pre></div><p data-pid="eLMAEMWc">好了，这就是一些条件跳转指令，将它们配合着前面的cmp指令一起使用，就能够达到if语句的效果。</p><p data-pid="AOqWs0zr">What？这该不会都得记住吧？其实不用，这里面是有套路的：</p><ul><li data-pid="mrs-fPgW">首先，跳转指令的前面都是字母j</li><li data-pid="o7_NeCll">关键是j后面的的字母</li></ul><p data-pid="kSDKTnKQ">比如j后面是ne，对应的是jne跳转指令，n和e分别对应not和equal，也就是“不相等”，也就是说在比较指令的结果为“不想等”的时候，就会跳转。</p><ul><li data-pid="-qZFCOw7">a: above</li><li data-pid="KhNr7XNN">e: equal</li><li data-pid="9vdAo-Va">b: below</li><li data-pid="6_6w0dZ2">n: not</li><li data-pid="TpWp-fw2">g: greater</li><li data-pid="6Hs5g5kv">l: lower</li><li data-pid="Gd6tZ9EL">s: signed</li><li data-pid="VKS-IcTK">z: zero</li></ul><p data-pid="AFB9hHfe">好了，这里列出来了j后面的字母所对应的含义。根据这些字母的组合，和上述大概的规则，你就能清楚怎么写出这些跳转指令了。当然，这里有“有符号”和“无符号”之分，后面有机会再扯，读者也可以自行了解。</p><p data-pid="6PEAxMaG">那么，接下来，就可以写出这样的程序所对应的汇编代码了：</p><div class="highlight"><pre><code class="language-text">int main() {
-    int x = 10;
-    if ( x &gt; 100 ) {
+jz 如果为零</code></pre></div><p data-pid="eLMAEMWc">好了，这就是一些条件跳转指令，将它们配合着前面的cmp指令一起使用，就能够达到if语句的效果。</p><p data-pid="AOqWs0zr">What？这该不会都得记住吧？其实不用，这里面是有套路的：</p><ul><li data-pid="mrs-fPgW">首先，跳转指令的前面都是字母j</li><li data-pid="o7_NeCll">关键是j后面的的字母</li></ul><p data-pid="kSDKTnKQ">比如j后面是ne，对应的是jne跳转指令，n和e分别对应not和equal，也就是“不相等”，也就是说在比较指令的结果为“不想等”的时候，就会跳转。</p><ul><li data-pid="-qZFCOw7">a: above</li><li data-pid="KhNr7XNN">e: equal</li><li data-pid="9vdAo-Va">b: below</li><li data-pid="6_6w0dZ2">n: not</li><li data-pid="TpWp-fw2">g: greater</li><li data-pid="6Hs5g5kv">l: lower</li><li data-pid="Gd6tZ9EL">s: signed</li><li data-pid="VKS-IcTK">z: zero</li></ul><p data-pid="AFB9hHfe">好了，这里列出来了j后面的字母所对应的含义。根据这些字母的组合，和上述大概的规则，你就能清楚怎么写出这些跳转指令了。当然，这里有“有符号”和“无符号”之分，后面有机会再扯，读者也可以自行了解。</p><p data-pid="6PEAxMaG">那么，接下来，就可以写出这样的程序所对应的汇编代码了：</p><div class="highlight"><pre><code class="language-text">
+int main() {
+    int x = 50;
+    if ( x <= 100 ) {
         x = x - 20;
     }
-    if( x &lt;= 10 ) {
+    if( x > 10 ) {
         x = x + 10;
     }
-    x = x + 1;
-    return 0;
+    x=x+3;
+    return x;
+}
 }</code></pre></div><p data-pid="95Hy0sDb">这个程序没什么卵用，存粹是为了演示。按照前面的套路，其实写出汇编代码也就不难了：</p><div class="highlight"><pre><code class="language-text">global main
+
 main:
-    mov eax, 10 
+    mov eax, 50
+    
     cmp eax, 100
     jle lower_or_equal_100
-    sub eax, 20
+    
 lower_or_equal_100:
+    sub eax, 20
     cmp eax, 10
     jg greater_10
-    add eax, 10
+  
+
 greater_10:
-    add eax, 1
-    ret</code></pre></div><p data-pid="pfyA_pI0">至于更多可能的写法，那就可以慢慢玩了。</p><h2>if都有了，那else if和else怎么办呢？</h2><p data-pid="JGCYQAVn">这里就不再赘述了，理一下思路：</p><ul><li data-pid="9i4DmmHy">首先根据你的需要，画出整个程序的流程图</li><li data-pid="DY6DYHKo">按照流程图中的跳转关系，通过汇编表达出来</li></ul><p data-pid="mRBSxiom">也就是说，在汇编里面，实际上没有所谓的if或else的说法，只是前面为方便说明，使用了C语言作类比，实际上汇编还可以写得比C语言的判断更加灵活。</p><p data-pid="9gIbvYw2">事实上，C语言里面的几种常见的if组织结构，都有对应的汇编语言里的套路。说白了，都是套路。</p><p data-pid="Tyj5RviE">那你怎么才能知道这些套路呢？很简单，用C语言写一个简单的程序，编译后按之前文章所说的内容，使用gdb去反汇编然后就能知道这里面的具体做法了。</p><p data-pid="EE8aiqvH">下面来尝试下一下：</p><div class="highlight"><pre><code class="language-text">int main() {
+    add eax, 10
+    add eax,3
+    ret
+
+add eax,3
+ret </code></pre></div><p data-pid="pfyA_pI0">至于更多可能的写法，那就可以慢慢玩了。</p><h2>if都有了，那else if和else怎么办呢？</h2><p data-pid="JGCYQAVn">这里就不再赘述了，理一下思路：</p><ul><li data-pid="9i4DmmHy">首先根据你的需要，画出整个程序的流程图</li><li data-pid="DY6DYHKo">按照流程图中的跳转关系，通过汇编表达出来</li></ul><p data-pid="mRBSxiom">也就是说，在汇编里面，实际上没有所谓的if或else的说法，只是前面为方便说明，使用了C语言作类比，实际上汇编还可以写得比C语言的判断更加灵活。</p><p data-pid="9gIbvYw2">事实上，C语言里面的几种常见的if组织结构，都有对应的汇编语言里的套路。说白了，都是套路。</p><p data-pid="Tyj5RviE">那你怎么才能知道这些套路呢？很简单，用C语言写一个简单的程序，编译后按之前文章所说的内容，使用gdb去反汇编然后就能知道这里面的具体做法了。</p><p data-pid="EE8aiqvH">下面来尝试下一下：</p><div class="highlight"><pre><code class="language-text">int main() {
     register int grade = 80;
     register int level;
     if ( grade &gt;= 85 ){

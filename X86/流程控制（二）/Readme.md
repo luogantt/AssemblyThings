@@ -15,7 +15,7 @@ goto sum is
 ```
 
 
-
+###
 [原文链接](https://zhuanlan.zhihu.com/p/23902265)
 <div class="RichText ztext Post-RichText css-yvdm7v" options="[object Object]"><h2 data-first-child="">回顾</h2><p data-pid="_7qOWOrI">前面说到在汇编语言中实现类似C语言if-else if-else这样的结构，</p><p data-pid="lpjWkFAD">实际上，在汇编里面，我们并不关心if了，取而代之的是两种基本的指令：</p><ul><li data-pid="KQlN_LJq">比较</li><li data-pid="nnyzfkrz">跳转</li></ul><p data-pid="bNjI6ke-">这两种指令即可组成最基本的分支程序结构，虽然跳转指令非常多，但是我们已经有套路了，怎么跳转都不怕了。当然，在编程环境中仅有分支还不够的，我们知道C语言中除了分支结构之外，还有循环这个最基本也是最常用的形式。正好，这也是本节话题的主角。</p><p data-pid="UQGsU7zq">文中涉及一些汇编代码，建议读者自行编程，通过动手实践来加深对程序的理解。</p><h2>拆散循环结构</h2><p data-pid="Yj6QXdCc">上回说到C语言中if这样的结构，在汇编里对应的是怎么回事，实质上，这就是分支结构的程序在汇编里的表现形式。</p><p data-pid="vIUlvGiy">实际上，循环结构相比分支结构，本质上，没有多少变化，仅仅是比较合跳转指令的组合的方式与顺序有所不同，所以形成了循环。</p><p data-pid="YWTs1wlM">当然，这个说法可能稍微拗口了一点。说得简单一点，循环的一个关键特点就是：</p><ul><li data-pid="2euSS67G">程序在往回跳转</li></ul><p data-pid="wVgf1AGR">细细想，好像有道理哦，如果程序每到一个位置就往前跳转，那就是死循环，如果是在这个位置根据条件决定是否要向前跳转，那就是有条件的循环了。</p><p data-pid="fZC5SdS9">口说无凭，还是先来分析一下一个C语言的while循环：</p><p data-pid="2Y3q7TB8">(Talk is chip, show your code!)</p><div class="highlight"><pre><code class="language-text">int sum = 0;
 int i = 1;
